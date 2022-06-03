@@ -105,7 +105,7 @@ const meProducts = catchAsync(async (req, res, next) => {
   if (products.length === 0) {
     return next(new AppError('No exists product', 404));
   }
-  
+
   res.status(200).json({ products });
 });
 
@@ -114,7 +114,17 @@ const orderUser = catchAsync(async (req, res, next) => {
 
   const orders = await Order.findAll({
     where: { userId },
-    include: [{ model: Cart, include: [{ model: ProductInCart }] }],
+    include: [
+      {
+        model: Cart,
+        include: [
+          {
+            model: ProductInCart,
+            include: [{ model: Product, attributes: ['id','title','description', 'price'] }],
+          },
+        ],
+      },
+    ],
   });
 
   /*if (orders.length === 0) {
